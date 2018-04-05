@@ -22,8 +22,21 @@ Level.prototype.init = function () {
 };
 
 Level.prototype.create = function () {
+	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
+	graphics.lineStyle(3, 0x00000);
+	createMaze(10,5,graphics);
+	/*
+	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
+	graphics.lineStyle(3, 0x00000);
+	graphics.arc(0,0,10,0,(360 * Math.PI / 180),false);
+	graphics.arc(0,0,50,0,(360 * Math.PI / 180),false);
+	graphics.arc(0,0,100,0,(360 * Math.PI / 180),false);
+	var x = graphics.arc(0,0,150,0,(360 * Math.PI / 180),false);
 
-	createMaze(10,4);
+	console.log(x);
+	var line = new Phaser.Line;
+	console.log(line);
+	*/
 };
 
 /**
@@ -34,9 +47,10 @@ Level.prototype.create = function () {
  * The main function that generates a level.
  */
 
-function createMaze(numberOfSections, numberOfLayers){
+function createMaze(numberOfSections, numberOfLayers,graphics){
 	var temp = generateMazeGrid(numberOfSections,numberOfLayers);
-	runPrims(temp, numberOfSections, numberOfLayers);
+	var maze = runPrims(temp, numberOfSections, numberOfLayers);
+	drawMaze(graphics,numberOfSections,numberOfLayers,maze);
 }
 
 /**
@@ -70,14 +84,22 @@ function generateMazeGrid(numberOfSections, numberOfLayers){
 	return grid;
 }
 
+/**
+ * 
+ * @param {*} maze - The 2D array of objects that represent the Maze
+ * @param {*} numberOfSections - Number of sections i.e. the width of the layers
+ * @param {*} numberOfLayers - The number of circles
+ * 
+ * @returns A fully completed perfect maze
+ * 
+ * Takes in a maze, and edits it so there is a path through it. This runs the Prim's Algorithm.
+ */
 function runPrims(maze,numberOfSections, numberOfLayers){
 	// For now, just do a simple array, but this can be implemented more efficently for a PQ
 
 	var frontier = []
 	//Starts from Point 0,0
 	frontier.push(maze[0][0]);
-	maze[0][0].opened = true;
-
 	//Get minimum of the frontier
 	function getMinimum(){
 		var currentMinimumIndex = -1;
@@ -85,9 +107,11 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 		//Loop through and find the minimum weight
 		for(var i = 0; i < frontier.length; i++){
 			if(frontier[i].weight < currentBestWeight){
+				currentBestWeight = frontier[i].weight;
 				currentMinimumIndex = i;
 			}
 		}
+
 		//Error Check
 		if(currentMinimumIndex == -1){
 			console.log("Wuh woah: Error line 92 - Frontier is empty, yet was still called");
@@ -95,6 +119,7 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 			//Return the minimum
 			return frontier.splice(currentMinimumIndex,1)[0];
 		}
+		
 	}
 
 	//Get neighbours
@@ -149,10 +174,25 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 		var min = getMinimum();
 		getNeighbours(min);
 	}
+
+	return maze;
 	
 }
 
-function drawMaze(){
+function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
+	var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
+	var circleWidth = 30;
+	for(var j = 0; j < numberOfLayers - 1; j++){
+		for(var i = 0; i < numberOfSections; i++){
+			//graphics.arc(0,0,10,i * sectorSize,(i + 1) * sectorSize,false);
+			if(maze[i][j] == maze[i][j+1].parent){
+				continue;
+			} else {
+				graphics.arc(0,0,circleWidth * j + circleWidth,i * sectorSize,(i + 1) * sectorSize,false);
+			}
+		}
+	}
+	
 
 }
 
