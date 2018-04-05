@@ -2,8 +2,8 @@
   "canvas-version": 2,
   "settings": {
     "className": "Level",
-    "sceneWidth": 640,
-    "sceneHeight": 360,
+    "sceneWidth": 1920,
+    "sceneHeight": 1080,
     "generateOnSave": true,
     "enableStepping": false,
     "lang": "JAVA_SCRIPT",
@@ -39,6 +39,7 @@
     "id": "8a0fc0bc-e3be-4656-9585-f855ac8ba0bb",
     "info": {
       "editorName": "Level",
+      "setAll": [],
       "children": []
     }
   },
