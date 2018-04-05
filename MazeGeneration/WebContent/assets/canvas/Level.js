@@ -24,7 +24,7 @@ Level.prototype.init = function () {
 Level.prototype.create = function () {
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
 	graphics.lineStyle(3, 0x00000);
-	createMaze(3,3,graphics);
+	createMaze(5,3,graphics);
 	/*
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
 	graphics.lineStyle(3, 0x00000);
@@ -222,11 +222,11 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 
 			console.log("sup");
 				//This is where I need to figure out how to the dividers 
-				x1 = ((circleWidth * j)  * Math.cos(i * sectorSize + nintyDegrees));
-				y1 = ((circleWidth * j)  * Math.sin(i * sectorSize + nintyDegrees));
+				x1 = ((circleWidth * j)  * Math.cos(i * sectorSize - nintyDegrees));
+				y1 = ((circleWidth * j)  * Math.sin(i * sectorSize - nintyDegrees));
 
-				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize + nintyDegrees);
-				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize + nintyDegrees);
+				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize - nintyDegrees);
+				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize - nintyDegrees);
 
 				graphics.moveTo(x1,y1);
 				graphics.lineTo(x2,y2);
