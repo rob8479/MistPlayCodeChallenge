@@ -24,7 +24,7 @@ Level.prototype.init = function () {
 Level.prototype.create = function () {
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
 	graphics.lineStyle(3, 0x00000);
-	createMaze(10,5,graphics);
+	createMaze(3,3,graphics);
 	/*
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
 	graphics.lineStyle(3, 0x00000);
@@ -179,9 +179,23 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 	
 }
 
+/**
+ * 
+ * @param {*} graphics - The graphics context used to draw the lines
+ * @param {*} numberOfSections - Number of divisons per layer
+ * @param {*} numberOfLayers  - Number of Circles
+ * @param {*} maze  - The Maze
+ * 
+ * From the generated Maze, it first draws the rings. It looks ahead "down" a layer, and if the parent of that cell is the current cell, we draw a wall.
+ * 
+ * After, we then draw the dividers within each layer. Similar idea as to before, but with straight lines
+ */
 function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 	var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
-	var circleWidth = 30;
+	var nintyDegrees = (90 * Math.PI)/180;
+	var circleWidth = 50;
+
+	//Draw the Circles "rings"
 	for(var j = 0; j < numberOfLayers - 1; j++){
 		for(var i = 0; i < numberOfSections; i++){
 			//graphics.arc(0,0,10,i * sectorSize,(i + 1) * sectorSize,false);
@@ -192,6 +206,35 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 			}
 		}
 	}
+
+	for(var i = 0; i < numberOfSections - 1; i++){
+			graphics.arc(0,0,circleWidth * numberOfLayers,i * sectorSize,(i + 1) * sectorSize,false);
+		
+	}
+
+	
+	//Draw the dividers within each Layer
+	for(var j = 1; j < numberOfLayers - 1; j++){
+		for(var i = 0; i < numberOfSections - 1 ; i++){	
+			if(maze[i][j] == maze[i + 1][j].parent){
+				continue;
+			} 
+
+			console.log("sup");
+				//This is where I need to figure out how to the dividers 
+				x1 = ((circleWidth * j)  * Math.cos(i * sectorSize + nintyDegrees));
+				y1 = ((circleWidth * j)  * Math.sin(i * sectorSize + nintyDegrees));
+
+				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize + nintyDegrees);
+				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize + nintyDegrees);
+
+				graphics.moveTo(x1,y1);
+				graphics.lineTo(x2,y2);
+			
+		}
+	}
+
+	
 	
 
 }
