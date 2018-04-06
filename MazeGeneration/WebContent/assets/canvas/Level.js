@@ -23,8 +23,9 @@ Level.prototype.init = function () {
 
 Level.prototype.create = function () {
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
+	this.physics.arcade.enable(graphics);
 	graphics.lineStyle(3, 0x00000);
-	createMaze(5,3,graphics);
+	createMaze(10,5,graphics);
 	/*
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
 	graphics.lineStyle(3, 0x00000);
@@ -136,16 +137,16 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 		
 		// Left
 		if(cell.x != 0){
-			if(maze[cell.x - 1][cell.y].parent == null){
-				maze[cell.x - 1][cell.y].parent = cell;
-				frontier.push(maze[cell.x - 1][cell.y]);
+			if(maze[cell.x - 1 % numberOfSections][cell.y].parent == null){
+				maze[cell.x - 1 % numberOfSections][cell.y].parent = cell;
+				frontier.push(maze[cell.x - 1 % numberOfSections][cell.y]);
 			}	
 		}
 
 		//Right
 		if(cell.x != numberOfSections - 1){
-			if(maze[cell.x + 1][cell.y].parent == null){
-				maze[cell.x + 1][cell.y].parent = cell;
+			if(maze[cell.x + 1 % numberOfSections][cell.y].parent == null){
+				maze[cell.x + 1 % numberOfSections][cell.y].parent = cell;
 				frontier.push(maze[cell.x + 1][cell.y]);
 			}	
 		}
@@ -212,6 +213,7 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 		
 	}
 
+	console.log("wuddup333");
 	
 	//Draw the dividers within each Layer
 	for(var j = 1; j < numberOfLayers - 1; j++){
@@ -219,19 +221,20 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 			if(maze[i][j] == maze[i + 1][j].parent){
 				continue;
 			} 
-
-			console.log("sup");
 				//This is where I need to figure out how to the dividers 
-				x1 = ((circleWidth * j)  * Math.cos(i * sectorSize - nintyDegrees));
-				y1 = ((circleWidth * j)  * Math.sin(i * sectorSize - nintyDegrees));
+				x1 = ((circleWidth * j)  * Math.cos(i * sectorSize));
+				y1 = ((circleWidth * j)  * Math.sin(i * sectorSize));
 
-				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize - nintyDegrees);
-				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize - nintyDegrees);
+				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize);
+				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize);
 
 				graphics.moveTo(x1,y1);
 				graphics.lineTo(x2,y2);
 			
 		}
+
+
+		
 	}
 
 	
