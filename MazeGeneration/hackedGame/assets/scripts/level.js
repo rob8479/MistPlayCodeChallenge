@@ -92,7 +92,9 @@ class Level {
 
         lines = this.levelMaze.getLines();
         points = this.levelMaze.getPoints();
-//        this.levelMaze.mazeExitTrigger.body.onBeginContact.add(this.handleFinishLevel, this);
+
+        console.log(points);
+ 
 
         /** Change this collision detection**/
 
@@ -189,9 +191,8 @@ class Level {
             
             // spins backgrouns to give dizzy effect
             if (spinWorld) {
-
 //                gameWorldGroup.angle += worldSpinSpeed; 
-                this.game.world.angle += worldSpinSpeed;
+                //this.game.world.angle += worldSpinSpeed;
             }            
             
             // Stars background effect
@@ -214,7 +215,10 @@ class Level {
         
         this.handleEnergyLevels();
 
+        //Added to Render the Maze Lines
         this.render();
+        //Check for collisions
+        this.checkCollisions();
     }
 
     /**
@@ -225,6 +229,19 @@ class Level {
         for(var i = 0; i < lines.length; i++){
             this.game.debug.geom(lines[i],c);
         }
+    }
+
+    checkCollisions(){
+        var play = this.player.sprite.x;
+        for(var i = 0; i < points.length; i++){
+            var xDiff = points[i][0] - this.player.sprite.x;
+            var yDiff = points[i][1] - this.player.sprite.y;
+            if(Math.sqrt((xDiff * xDiff) + (yDiff * yDiff)) < 20){
+                this.handleCrash();
+            }
+        }     
+        
+        
     }
     
     // sets dimensions and bounds of world

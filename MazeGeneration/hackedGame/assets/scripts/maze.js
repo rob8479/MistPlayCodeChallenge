@@ -177,12 +177,12 @@ class Maze {
             getNeighbours(min);
         }
 
-
+        /*
         for(var i = 0; i < maze.length; i++){
             for(var j = 0; j < maze[0].length; j++){
                 console.log(maze[i][j].x + " , " + maze[i][j].y + " Weight: " + maze[i][j].weight);
             }
-        }
+        }*/
 
         /*
         for(var i = 0; i < maze.length; i++){
@@ -210,7 +210,7 @@ class Maze {
      */
     drawMaze(numberOfSections,numberOfLayers, maze){
         var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
-        var circleWidth = 150;
+        var circleWidth = 100;
 
         /*
         //Draw the Circles "rings"
@@ -244,10 +244,12 @@ class Maze {
 
                     var temp = new Phaser.Line(x1, y1, x2, y2);
                     lines.push(temp);
-                    var p = temp.coordinatesOnLine(5);
+
+                    var p = temp.coordinatesOnLine(10);
                     for(var k = 0; k < p.length; k++){
                         points.push(p[k]);
                     }
+                    
                 }
             }
         }
