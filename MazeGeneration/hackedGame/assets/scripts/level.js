@@ -83,9 +83,13 @@ class Level {
         // creates 3 seperate stars backgrounds
         this.createStars(); 
         
+        /** Change this */
         this.levelMaze = new Maze();
         this.levelMaze.createMaze(this.game, this.mazeKey);
 //        this.levelMaze.mazeExitTrigger.body.onBeginContact.add(this.handleFinishLevel, this);
+
+        /** Change this collision detection**/
+
         this.levelMaze.spaceJump.body.onBeginContact.add((function () {
             
             // 'if' statement stops functions being called more than once

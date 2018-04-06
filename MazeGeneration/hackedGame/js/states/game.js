@@ -57,6 +57,9 @@ class Game {
     
     setupMaze () {
         
+        /** Change This Function */
+
+
         mazeKey = 'maze' + String(currentLevel - 1);
         mazeWidth = this.game.cache.getImage(mazeKey).width;
         mazeHeight = this.game.cache.getImage(mazeKey).height;

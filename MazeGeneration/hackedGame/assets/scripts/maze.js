@@ -1,7 +1,9 @@
 class Maze {
     
+    /* Change this whole Class */
+
+
     constructor () {
-        
         
     }
     
