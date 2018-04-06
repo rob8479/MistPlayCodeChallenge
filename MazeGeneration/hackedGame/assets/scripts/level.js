@@ -37,6 +37,9 @@ var energyBarY;
 
 var gameWorldGroup;
 
+var lines = [];
+var points = [];
+
 // different energy level colours
 var energyBarColour; // colour of player's energy bar
 const energyFullColour = 0x00ffaa;
@@ -86,6 +89,9 @@ class Level {
         /** Change this */
         this.levelMaze = new Maze();
         this.levelMaze.createMaze(this.game, this.mazeKey);
+
+        lines = this.levelMaze.getLines();
+        points = this.levelMaze.getPoints();
 //        this.levelMaze.mazeExitTrigger.body.onBeginContact.add(this.handleFinishLevel, this);
 
         /** Change this collision detection**/
@@ -117,7 +123,7 @@ class Level {
         this.playerGroup.add(this.player.sprite); 
         this.game.world.bringToTop(this.playerGroup);
         
-        this.levelMaze.maze.body.createBodyCallback(this.player.sprite, this.handleCrash, this); // sets callback for maze collision
+        //this.levelMaze.maze.body.createBodyCallback(this.player.sprite, this.handleCrash, this); // sets callback for maze collision
         
 //        this.initTimeText();
 //        this.displayHighScore();
@@ -207,6 +213,18 @@ class Level {
 //        this.energyText.text = "Energy Cells: " + this.tokensCollected;
         
         this.handleEnergyLevels();
+
+        this.render();
+    }
+
+    /**
+     * Draws the Lines
+     */
+    render(){
+        var c = 'rgb(255,255,255)';
+        for(var i = 0; i < lines.length; i++){
+            this.game.debug.geom(lines[i],c);
+        }
     }
     
     // sets dimensions and bounds of world

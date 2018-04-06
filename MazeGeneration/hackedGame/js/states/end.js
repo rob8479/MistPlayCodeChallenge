@@ -144,19 +144,7 @@ class EndLevel {
         var bestCells = this.game.add.text(this.game.width/2, this.game.height/4 + 100, '', bestScoreStyle);
         bestCells.anchor.setTo(0.5);
         
-        if (currentLevel >= introduceCells) {
-            
-            this.cellText.setText(
-            localStorage.getItem('cellsCollected') + '/' + this.cellLocations.cellData[currentLevel - 1].length);
-            bestCells.setText('BEST: ' + localStorage.getItem(highScoreKey) + '/' + this.cellLocations.cellData[currentLevel - 1].length);
-            
-        }
         
-        else {
-            
-            this.cellText.setText('0/0');
-            bestCells.setText('BEST: 0/0');
-        }
         
 //        var timeIcon = this.game.add.sprite(this.game.width/2, this.game.height/2 + 25, 'time');
 //        timeIcon.anchor.setTo(0.5);

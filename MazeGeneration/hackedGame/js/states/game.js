@@ -35,11 +35,13 @@ class Game {
             localStorage.setItem('currentLevel', String(1))
         }
         
-        currentLevel = Number(localStorage.getItem('currentLevel')) // retreives current level from local storage
-        
+        //currentLevel = Number(localStorage.getItem('currentLevel')) // retreives current level from local storage
+        currentLevel = 3;
+
         level = currentLevel;
         
         this.setupMaze(); // gets maze height, width, and sprite key for the current level
+
         tokenKey = 'tokens' + String(currentLevel - 1); // sets the key for the current level for spawning cells
 
         this.level = new Level(mazeKey, debug, this.game);

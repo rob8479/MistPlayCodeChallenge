@@ -19,15 +19,12 @@ Level.prototype.init = function () {
 	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 	this.scale.pageAlignHorizontally = true;
 	this.scale.pageAlignVertically = true;
-	this.stage.backgroundColor = '#ffffff';
+	this.stage.backgroundColor = '#000000';
 	
 };
 
 Level.prototype.create = function () {
-	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
-	this.physics.arcade.enable(graphics);
-	graphics.lineStyle(3, 0x00000);
-	createMaze(10,5,graphics);
+	createMaze(10,7);
 	//createMaze(3,3,graphics);
 	/*
 	var graphics = this.add.graphics(this.world.centerX, this.world.centerY);
@@ -44,11 +41,11 @@ Level.prototype.create = function () {
 };
 
 Level.prototype.render = function(){
-	var c = 'rgb(0,0,0)';
+	var c = 'rgb(255,255,255)';
 	for(var i = 0; i < lines.length; i++){
 		this.game.debug.geom(lines[i],c);
 	}
-}
+};
 
 /**
  * 
@@ -58,10 +55,10 @@ Level.prototype.render = function(){
  * The main function that generates a level.
  */
 
-function createMaze(numberOfSections, numberOfLayers,graphics){
+function createMaze(numberOfSections, numberOfLayers){
 	var temp = generateMazeGrid(numberOfSections,numberOfLayers);
 	var maze = runPrims(temp, numberOfSections, numberOfLayers);
-	drawMaze(graphics,numberOfSections,numberOfLayers,maze);
+	drawMaze(numberOfSections,numberOfLayers,maze);
 }
 
 /**
@@ -130,7 +127,7 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 		} else {
 			//Return the minimum
 			var temp =  frontier.splice(currentMinimumIndex,1)[0];
-			console.log("Removed " + temp.x + " " + temp.y);
+			//console.log("Removed " + temp.x + " " + temp.y);
 			return temp;
 		}
 		
@@ -149,30 +146,21 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 		 */
 		
 		// Left
-		var val;
-		if(cell.x == 0){
-			val = numberOfSections - 1;
-		} else {
-			val = cell.x - 1;
+		if(cell.x != 0){
+			if(maze[cell.x - 1][cell.y].parent == null){
+				maze[cell.x - 1][cell.y].parent = cell;
+				frontier.push(maze[cell.x - 1][cell.y]);
+			}	
 		}
-
-		if(maze[val][cell.y].parent == null){
-			maze[val][cell.y].parent = cell;
-			frontier.push(maze[val][cell.y]);
-		}	
 		
-		if(cell.x == numberOfSections - 1){
-			val = 0;
-		} else {
-			val = cell.x + 1;
-		}
-
 
 		//Right
-		if(maze[val][cell.y].parent == null){
-			maze[val][cell.y].parent = cell;
-			frontier.push(maze[val][cell.y]);
-		}	
+		if(cell.x != numberOfSections - 1){
+			if(maze[cell.x + 1][cell.y].parent == null){
+				maze[cell.x + 1][cell.y].parent = cell;
+				frontier.push(maze[cell.x + 1][cell.y]);
+			}	
+		}
 
 		//Up
 		if(cell.y != 0){
@@ -199,13 +187,32 @@ function runPrims(maze,numberOfSections, numberOfLayers){
 		getNeighbours(min);
 	}
 
-	return maze;
-	
+
+	for(var i = 0; i < maze.length; i++){
+		for(var j = 0; j < maze[0].length; j++){
+			console.log(maze[i][j].x + " , " + maze[i][j].y + " Weight: " + maze[i][j].weight);
+		}
+	}
+
+	/*
+	for(var i = 0; i < maze.length; i++){
+		for(var j = 0; j < maze[0].length; j++){
+			if(i == 0 && j == 0){
+				continue;
+			}
+			console.log(maze[i][j].x + " , " + maze[i][j].y + " Parent: " + maze[i][j].parent.x + " , " + maze[i][j].parent.y);
+		}
+	}
+	*/
+
+	return maze;	
 }
+
+var points = [];
+
 
 /**
  * 
- * @param {*} graphics - The graphics context used to draw the lines
  * @param {*} numberOfSections - Number of divisons per layer
  * @param {*} numberOfLayers  - Number of Circles
  * @param {*} maze  - The Maze
@@ -214,7 +221,7 @@ function runPrims(maze,numberOfSections, numberOfLayers){
  * 
  * After, we then draw the dividers within each layer. Similar idea as to before, but with straight lines
  */
-function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
+function drawMaze(numberOfSections,numberOfLayers, maze){
 	var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
 	var nintyDegrees = (90 * Math.PI)/180;
 	var circleWidth = 50;
@@ -240,7 +247,7 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 	//Draw The Circles, but only using straight lines
 	for(var j = 0; j < numberOfLayers - 1; j++){
 		for(var i = 0; i < numberOfSections; i++){
-			if(maze[i][j] == maze[i][j+1].parent){
+			if(maze[i][j].x == maze[i][j+1].parent.x && maze[i][j].y == maze[i][j+1].parent.y){
 				continue;
 			} else {
 				x1 = ((circleWidth * j + circleWidth)  * Math.cos(i * sectorSize)) + 400;
@@ -249,46 +256,39 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize + sectorSize) + 400;
 				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize + sectorSize) + 300;
 
-				lines.push(new Phaser.Line(x1, y1, x2, y2));
-				//graphics.moveTo(x1,y1);
-				//graphics.lineTo(x2,y2);
+				var temp = new Phaser.Line(x1, y1, x2, y2);
+				lines.push(temp);
+				var p = temp.coordinatesOnLine(5);
+				for(var k = 0; k < p.length; k++){
+					points.push(p[k]);
+				}
 			}
 		}
-
-		//the Last layer
-		if(maze[numberOfSections - 1][j] == maze[0][j].parent){
-			continue;
-		} else {
-			x1 = ((circleWidth * j + circleWidth)  * Math.cos(numberOfSections * sectorSize)) + 400;
-			y1 = ((circleWidth * j + circleWidth)  * Math.sin(numberOfSections * sectorSize)) + 300;
-
-			x2 = ((circleWidth * j) + circleWidth)  * Math.cos(numberOfSections * sectorSize + sectorSize) + 400;
-			y2 = ((circleWidth * j) + circleWidth)  * Math.sin(numberOfSections * sectorSize + sectorSize) + 300;
-		}
-
 	}
 
-	/*	
+	/*
 	//Draw the dividers within each Layer
-	for(var j = 1; j < numberOfLayers - 1; j++){
+	for(var j = 1; j < numberOfLayers; j++){
 		for(var i = 0; i < numberOfSections - 1 ; i++){	
-			if(maze[i][j] == maze[i + 1][j].parent){
+			if(maze[i][j].x == maze[i + 1][j].parent.y && maze[i][j].x == maze[i + 1][j].parent.y){
 				continue;
-			} 
+			} else{
 				//This is where I need to figure out how to the dividers 
-				x1 = ((circleWidth * j)  * Math.cos(i * sectorSize)) + 400;
-				y1 = ((circleWidth * j)  * Math.sin(i * sectorSize) + 300);
+				x1 = (circleWidth * j)  * Math.cos(i * sectorSize) + 400;
+				y1 = (circleWidth * j)  * Math.sin(i * sectorSize) + 300;
 
-				x2 = ((circleWidth * j) + circleWidth)  * Math.cos(i * sectorSize) + 400;
-				y2 = ((circleWidth * j) + circleWidth)  * Math.sin(i * sectorSize) + 300;
+				x2 = (circleWidth * (j + 1))  * Math.cos(i * sectorSize) + 400;
+				y2 = (circleWidth * (j + 1))  * Math.sin(i * sectorSize) + 300;
 
 				lines.push(new Phaser.Line(x1, y1, x2, y2));
-			
-		}		
+			}
+		}			
+
 	}
 	*/
 	
-
+	
+	//console.log(points);
 }
 
 function addStars(){
