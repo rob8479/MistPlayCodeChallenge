@@ -212,8 +212,6 @@ function drawMaze(graphics,numberOfSections,numberOfLayers, maze){
 			graphics.arc(0,0,circleWidth * numberOfLayers,i * sectorSize,(i + 1) * sectorSize,false);
 		
 	}
-
-	console.log("wuddup333");
 	
 	//Draw the dividers within each Layer
 	for(var j = 1; j < numberOfLayers - 1; j++){

@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Rocket Maze</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui shrink-to-fit=no" />
+	<script src="js/phaser.min.js"></script>    
+	<script src="js/swipe.js"> var Swipe = require("phaser-swipe"); </script>
+    
+	<script src="js/states/boot.js"></script>
+	<script src="js/states/preloader.js"></script>
+	<script src="js/states/game.js"></script>
+	<script src="js/states/end.js"></script>
+    
+    <script src="assets/scripts/level.js"></script>
+	<script src="assets/scripts/rocket.js"></script>
+	<script src="assets/scripts/maze.js"></script>
+	<script src="assets/scripts/panel.js"></script>
+	<script src="assets/scripts/utils.js"></script>
+
+</head>
+<body>
+    <style>
+            body {
+                padding: 0px;
+                margin: 0px;
+                background: #10192c;
+                height: 100%
+            }
+        </style>
+
+        <div id="container">
+            <div id='game'></div>
+        </div>
+
+    <script type="text/javascript">
+
+    (function () {
+
+//        var game = new Phaser.Game('100%', '100%', Phaser.AUTO, 'game');
+        var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'game');
+        // width, height, renderer, parent, state, transparent, antialias, physicsConfig
+
+        game.state.add('Boot', RocketMaze.Boot);
+        game.state.add('Preloader', RocketMaze.Preloader);
+        game.state.add('Game', RocketMaze.Game);
+        game.state.add('EndLevel', RocketMaze.EndLevel);
+
+        game.state.start('Boot');
+
+    })();
+    </script>
+    
+</body>
+</html>
