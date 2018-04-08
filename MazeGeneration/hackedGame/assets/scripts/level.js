@@ -313,10 +313,42 @@ class Level {
     
     // creates and places energy cells in world
     createCells() {
+        //From the Maze, gatber the star positions
+        this.starPositions = this.levelMaze.getStarPositions(5,70);
         
-        /*** REDO THIS FUNCTION*/
+        //Spawn each of the Stars returned
+        for(var i = 0; i < this.starPositions.length; i++){
 
-        // allocates JSON file to variable
+            this.cellX = this.starPositions[i][0];
+            this.cellY = this.starPositions[i][1];
+
+            cells[i] = this.game.add.sprite(this.cellX,this.cellY, 'cell');
+
+            cells[i].scale.setTo(0.15);
+            this.game.physics.p2.enable(cells[i], enableBodyDebug); // enables physics on the cell
+            
+            cells[i].anchor.setTo(0.5); // sets anchor to centre
+            cells[i].body.static = true; // makes cell immovable
+            cells[i].body.data.shapes[0].sensor = true; // turns cell into sensor instead of rigid collider
+            
+            // cell will shrink and lose its collider, +1 is added to the player's score, player's energy is refilled, a particle effect
+            // will play, and the player's spaceship will animate
+            cells[i].body.onBeginContact.add(function () {
+                //this.game.add.tween(cells[i].scale).to( { x: 0, y: 0 }, 500, "Linear", true, 0, 0, false);
+                console.log(cells[i]);
+                //cells[i].body.clearShapes(); // clears cell's collider
+                this.tokensCollected += 1; // adds +1 to a count of how many cells have been collected
+                this.player.energy = fullEnergy; // restores player's to 100%
+                this.collectionAnimations(); // plays particle effect and player scaling animation              
+            }, this);
+                        
+            // makes the tokens spin
+            this.game.add.tween(cells[i].body).to( { rotation: this.game.math.degToRad(360) }, 4000, "Linear", true, 0, -1, true);
+
+        }
+
+
+        /* LEGACY
         this.cellLocations = this.game.cache.getJSON('cellData');
         
         // cycles through an array containing the current level's cell locations
@@ -353,6 +385,7 @@ class Level {
             
 //            gameWorldGroup.add(cells[i]); // adds cell to group that main rotation group
         }
+        */
     }
         
     // creates player in world and brings player to top

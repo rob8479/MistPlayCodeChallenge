@@ -39,27 +39,72 @@ class Maze {
      * 
      * @param {*} numberOfSections - The number of "spokes". These are the number of grid cells we have per layer  
      * @param {*} numberOfLayers - The number of layers the total maze has. I.e. - the number of nested circles
+     * @param {*} circleWidth - The number which represents how wide each layer is
      * 
      * The main function that generates a level.
+     * 
+     * First it generates a random grid of noise, before running the maze generation algorithm, and then generating the elements to draw the maze.
+     * Then it adds the exit portal
+     * 
      */
 
     createNewMaze(numberOfSections, numberOfLayers,circleWidth){
+        this.circleWidth = circleWidth;
+        this.numberOfLayers = numberOfLayers;
+        this.numberOfSections = numberOfSections;
         var temp = this.generateMazeGrid(numberOfSections,numberOfLayers);
-        var maze = this.runPrims(temp, numberOfSections, numberOfLayers);
-        this.drawMaze(numberOfSections,numberOfLayers,maze,circleWidth);
+        this.maze = this.runPrims(temp, numberOfSections, numberOfLayers);
+        this.drawMaze(numberOfSections,numberOfLayers,this.maze,circleWidth);
         this.calculateJumpPosition(numberOfSections,numberOfLayers,circleWidth);
     }
 
-
-    calculateJumpPosition(numberOfSections,numberOfLayers,circleWidth){
+    getStarPositions(numberOfStars,circleWidth){
         
-        var randomSection = Math.floor((Math.random() * numberOfSections - 1));
+        var numberSpawned = 0;
+        var starPositions = [];
 
+        while(numberSpawned != numberOfStars){
+            //Randomly Select the layer and section
+            var layer = Math.floor((Math.random() * (this.numberOfLayers - 1)));
+            var section = Math.floor((Math.random() * (this.numberOfSections - 1)));
+            
+            //If there is not already a star at this position, add one to the maze
+            if(!this.maze[section,layer].star){
+                this.maze[section,layer].star = true;
+                //Calculate the world co-ords
+                var x = ((circleWidth * (layer)) + (circleWidth * 1.5))  * Math.cos(section * this.sectorSize + (this.sectorSize / 2));
+                var y = ((circleWidth * (layer)) + (circleWidth * 1.5))  * Math.sin(section * this.sectorSize + (this.sectorSize / 2));
+                //Push co-ords to array
+                starPositions.push([x,y]);
+                numberSpawned++;
+            }
+        
+        }
+
+        return starPositions;
+
+    }
+
+    /**
+     * 
+     * @param {*} numberOfSections - Number of sections in a circle
+     * @param {*} numberOfLayers - Number of layers - the total number of circles
+     * @param {*} circleWidth - The Width of each circle
+     * 
+     * Randomly selects a section where the exit will be spawned. Then, generates the x and y co-ordinate to spawn it.
+     * This is what this.placeJump requires in order to spawn the portal.
+     */
+    calculateJumpPosition(numberOfSections,numberOfLayers,circleWidth){
+        //Random number between 0 and the numberOfSections - 1
+        var randomSection = Math.floor((Math.random() * numberOfSections - 1));
+        //Trig. to get the position
         var x = ((circleWidth * (numberOfLayers)) - (circleWidth/2))  * Math.cos(randomSection * this.sectorSize + (this.sectorSize / 2));
         var y = ((circleWidth * (numberOfLayers)) - (circleWidth/2))  * Math.sin(randomSection * this.sectorSize + (this.sectorSize / 2));
-
+        //Save the values
         this.spaceJumpX = x;
         this.spaceJumpY = y;
+        //Set the exit as taken, so we cannot spawn a star on top of the exit gate
+        this.maze[randomSection,numberOfLayers - 1].star = true;
     }
 
 
@@ -87,7 +132,9 @@ class Maze {
                 data.y = j;
                 //Parent is the value in the path as to where we came from. This means that this is part of the path, between Parent and this one. Do not draw a line
                 data.parent = null;
-                grid[i][j] = data
+                //Where the section has a star in it or not
+                data.star = false;
+                grid[i][j] = data;
             }
         }
         
