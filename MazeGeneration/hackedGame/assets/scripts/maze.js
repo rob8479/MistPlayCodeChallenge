@@ -16,8 +16,7 @@ class Maze {
         this.mazeKey = mazeKey;
         this.handleFinishLevel = handleFinishLevel;
         
-        this.createNewMaze(10,5);
-
+        this.createNewMaze(10,6,70);
         this.placeJump();
     }
 
@@ -44,11 +43,25 @@ class Maze {
      * The main function that generates a level.
      */
 
-    createNewMaze(numberOfSections, numberOfLayers){
+    createNewMaze(numberOfSections, numberOfLayers,circleWidth){
         var temp = this.generateMazeGrid(numberOfSections,numberOfLayers);
         var maze = this.runPrims(temp, numberOfSections, numberOfLayers);
-        this.drawMaze(numberOfSections,numberOfLayers,maze);
+        this.drawMaze(numberOfSections,numberOfLayers,maze,circleWidth);
+        this.calculateJumpPosition(numberOfSections,numberOfLayers,circleWidth);
     }
+
+
+    calculateJumpPosition(numberOfSections,numberOfLayers,circleWidth){
+        
+        var randomSection = Math.floor((Math.random() * numberOfSections - 1));
+
+        var x = ((circleWidth * (numberOfLayers)) - (circleWidth/2))  * Math.cos(randomSection * this.sectorSize + (this.sectorSize / 2));
+        var y = ((circleWidth * (numberOfLayers)) - (circleWidth/2))  * Math.sin(randomSection * this.sectorSize + (this.sectorSize / 2));
+
+        this.spaceJumpX = x;
+        this.spaceJumpY = y;
+    }
+
 
     /**
      * 
@@ -208,27 +221,9 @@ class Maze {
      * 
      * After, we then draw the dividers within each layer. Similar idea as to before, but with straight lines
      */
-    drawMaze(numberOfSections,numberOfLayers, maze){
+    drawMaze(numberOfSections,numberOfLayers, maze, circleWidth){
         var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
-        var circleWidth = 100;
-
-        /*
-        //Draw the Circles "rings"
-        for(var j = 0; j < numberOfLayers - 1; j++){
-            for(var i = 0; i < numberOfSections; i++){
-                //graphics.arc(0,0,10,i * sectorSize,(i + 1) * sectorSize,false);
-                if(maze[i][j] == maze[i][j+1].parent){
-                    continue;
-                } else {
-                    graphics.arc(0,0,circleWidth * j + circleWidth,i * sectorSize,(i + 1) * sectorSize,false);
-                }
-            }
-        }
-
-        for(var i = 0; i < numberOfSections - 1; i++){
-                graphics.arc(0,0,circleWidth * numberOfLayers,i * sectorSize,(i + 1) * sectorSize,false);
-            
-        }*/
+        this.sectorSize = sectorSize;
 
         //Draw The Circles, but only using straight lines
         for(var j = 0; j < numberOfLayers - 1; j++){
@@ -254,6 +249,23 @@ class Maze {
             }
         }
 
+        //Draw the outmost ring - the Border of the entire maze
+        for(var i = 0; i < numberOfSections; i++){
+            var x1 = ((circleWidth * (numberOfLayers - 1) + circleWidth)  * Math.cos(i * sectorSize));
+            var y1 = ((circleWidth * (numberOfLayers - 1) + circleWidth)  * Math.sin(i * sectorSize));
+
+            var x2 = ((circleWidth * (numberOfLayers - 1)) + circleWidth)  * Math.cos(i * sectorSize + sectorSize);
+            var y2 = ((circleWidth * (numberOfLayers - 1)) + circleWidth)  * Math.sin(i * sectorSize + sectorSize);
+
+            var temp = new Phaser.Line(x1, y1, x2, y2);
+                    lines.push(temp);
+
+                    var p = temp.coordinatesOnLine(10);
+                    for(var k = 0; k < p.length; k++){
+                        points.push(p[k]);
+                    }
+        }
+
         /*
         //Draw the dividers within each Layer
         for(var j = 1; j < numberOfLayers; j++){
@@ -274,27 +286,16 @@ class Maze {
 
         }
         */
-        
-        
-        //console.log(points);
         }
     
     placeJump () {
-
-        
-        //this.spaceJumpLocations = this.game.cache.getJSON('spaceJumpData');
-        
-        this.spaceJumpX = 100;
-        this.spaceJumpY = 100;
-        
         this.spaceJump = this.game.add.sprite(this.spaceJumpX, this.spaceJumpY, 'spaceJump');
-        this.spaceJump.anchor.setTo(0.5);
+        this.spaceJump.anchor.setTo(0.5,0.5);
         this.game.physics.p2.enable(this.spaceJump, enableBodyDebug);
         this.spaceJump.body.data.shapes[0].sensor = true;
 
         // rotates portal
         this.game.add.tween(this.spaceJump.body).to( { rotation: this.game.math.degToRad(360) }, 4000, "Linear", true, 0, -1, false);
-//        this.game.add.tween(this.spaceJump).to( { tint: 0x000000 }, 2000000, "Linear", true, 0, -1, true);
         this.spaceJump.tint = 0xffffff;
         
         // creates a particle effect that emmits from the player when an energy cell is collected

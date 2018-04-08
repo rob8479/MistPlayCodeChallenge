@@ -93,7 +93,7 @@ class Level {
         lines = this.levelMaze.getLines();
         points = this.levelMaze.getPoints();
 
-        console.log(points);
+        //console.log(points);
  
 
         /** Change this collision detection**/
@@ -102,7 +102,7 @@ class Level {
             
             // 'if' statement stops functions being called more than once
             if (!levelComplete) {
-                this.levelMaze.maze.body.clearShapes();
+                //this.levelMaze.maze.body.clearShapes();
                 this.handleFinishLevel();
             }
             
@@ -231,12 +231,15 @@ class Level {
         }
     }
 
+    /**
+     *  Performs simple collision detection with the maze walls. For every point on the lines, check whether the distance between
+     *  the player and each of these points is less than a threshold. If it is, then they are within collision range.
+     */
     checkCollisions(){
-        var play = this.player.sprite.x;
         for(var i = 0; i < points.length; i++){
             var xDiff = points[i][0] - this.player.sprite.x;
             var yDiff = points[i][1] - this.player.sprite.y;
-            if(Math.sqrt((xDiff * xDiff) + (yDiff * yDiff)) < 20){
+            if(Math.sqrt((xDiff * xDiff) + (yDiff * yDiff)) < 15){
                 this.handleCrash();
             }
         }     
@@ -311,6 +314,8 @@ class Level {
     // creates and places energy cells in world
     createCells() {
         
+        /*** REDO THIS FUNCTION*/
+
         // allocates JSON file to variable
         this.cellLocations = this.game.cache.getJSON('cellData');
         
@@ -689,7 +694,7 @@ class Level {
         this.setHighScore();
 
         failed = false;
-        
+       
         this.fadeOut();    
                 
     }
@@ -712,7 +717,9 @@ class Level {
         // stops rocket animations and sets it to default image (no boost)
 //        this.player.sprite.animations.stop();
 //        this.player.sprite.frame = 0;
-        
+        //Reset Maze
+        lines = [];
+        points = [];
         this.fadeOut();
     }
     
