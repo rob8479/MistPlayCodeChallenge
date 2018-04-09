@@ -10,21 +10,14 @@ class Maze {
     
     
     // creates maze and maze colliders
-    createMaze (game, mazeKey, handleFinishLevel) {
+    createMaze (game, mazeKey,graphics) {
         
         this.game = game;
         this.mazeKey = mazeKey;
-        this.handleFinishLevel = handleFinishLevel;
-        
+        //this.handleFinishLevel = handleFinishLevel;
+        this.graphics = graphics;
         this.createNewMaze(10,6,70);
         this.placeJump();
-    }
-
-    /**
-     * @returns All line objects which represent the maze
-     */
-    getLines(){
-        return lines;
     }
 
     /**
@@ -303,11 +296,11 @@ class Maze {
         var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
         this.sectorSize = sectorSize;
 
-        this.debugPrint(maze);
+        //this.debugPrint(maze);
 
-        //Draw the inner most ring - the Spawn Error
+        //Draw the inner most ring - the Spawn Area
         for(var i = 1; i < numberOfSections; i++){
-            var x1 = (circleWidth)  * Math.cos(i * sectorSize);
+            /*var x1 = (circleWidth)  * Math.cos(i * sectorSize);
             var y1 = (circleWidth)  * Math.sin(i * sectorSize);
 
             var x2 = (circleWidth)  * Math.cos(i * sectorSize + sectorSize);
@@ -320,11 +313,12 @@ class Maze {
             var p = temp.coordinatesOnLine(10);
             for(var k = 0; k < p.length; k++){
                 points.push(p[k]);
-            }
+            }*/
+
+            this.graphics.arc(0,0,circleWidth,(i * sectorSize), ((i + 1) * sectorSize),false);
         }
 
         
-
         //Draw The Circles, but only using straight lines
         for(var j = 0; j < numberOfLayers - 1; j++){
             for(var i = 0; i < numberOfSections; i++){
@@ -333,6 +327,7 @@ class Maze {
                     (maze[i][j+1].x == maze[i][j].parent.x && maze[i][j+1].y == maze[i][j].parent.y)){
                     continue;
                 } else {
+                    /*
                     var x1 = ((circleWidth * j + circleWidth * 2)  * Math.cos(i * sectorSize));
                     var y1 = ((circleWidth * j + circleWidth * 2)  * Math.sin(i * sectorSize));
 
@@ -346,13 +341,15 @@ class Maze {
                     for(var k = 0; k < p.length; k++){
                         points.push(p[k]);
                     }
-                    
+                    */
+                   this.graphics.arc(0,0,circleWidth * j + circleWidth * 2,(i * sectorSize), ((i + 1) * sectorSize),false);
                 }
             }
         } 
 
         //Draw the outmost ring - the Border of the entire maze
         for(var i = 0; i < numberOfSections; i++){
+            /*
             var x1 = ((circleWidth * (numberOfLayers - 1) + circleWidth * 2)  * Math.cos(i * sectorSize));
             var y1 = ((circleWidth * (numberOfLayers - 1) + circleWidth * 2)  * Math.sin(i * sectorSize));
 
@@ -365,7 +362,8 @@ class Maze {
             var p = temp.coordinatesOnLine(10);
             for(var k = 0; k < p.length; k++){
                 points.push(p[k]);
-            }
+            }*/
+            this.graphics.arc(0,0,circleWidth * (numberOfLayers - 1) + circleWidth * 2,(i * sectorSize), ((i + 1) * sectorSize),false);
         }
 
         //Dividers inside each level
@@ -375,13 +373,14 @@ class Maze {
                         (maze[i + 1][j].x == maze[i][j].parent.x && maze[i + 1][j].y == maze[i][j].parent.y)){
                         continue;
                     } else{
+                        
                         //This is where I need to figure out how to the dividers 
                         var x1 = (circleWidth * (j + 1))  * Math.cos(i * sectorSize + sectorSize);
-                        y1 = (circleWidth * (j + 1))  * Math.sin(i * sectorSize  + sectorSize);
+                        var y1 = (circleWidth * (j + 1))  * Math.sin(i * sectorSize  + sectorSize);
 
-                        x2 = (circleWidth * (j + 2))  * Math.cos(i * sectorSize  + sectorSize);
-                        y2 = (circleWidth * (j + 2))  * Math.sin(i * sectorSize  + sectorSize);
-
+                        var x2 = (circleWidth * (j + 2))  * Math.cos(i * sectorSize  + sectorSize);
+                        var y2 = (circleWidth * (j + 2))  * Math.sin(i * sectorSize  + sectorSize);
+                        /*
                         var temp = (new Phaser.Line(x1, y1, x2, y2));
                         lines.push(temp);
 
@@ -389,6 +388,9 @@ class Maze {
                         for(var k = 0; k < p.length; k++){
                             points.push(p[k]);
                         }
+                        */
+                       this.graphics.moveTo(x1,y1);
+                       this.graphics.lineTo(x2,y2);
                     }
             }
          }
@@ -401,6 +403,10 @@ class Maze {
             x2 = (circleWidth * (j + 2))  * Math.cos(0);
             y2 = (circleWidth * (j + 2))  * Math.sin(0);
 
+            this.graphics.moveTo(x1,y1);
+            this.graphics.lineTo(x2,y2);
+
+            /*
             lines.push(new Phaser.Line(x1, y1, x2, y2));
             var temp = (new Phaser.Line(x1, y1, x2, y2));
             lines.push(temp);
@@ -408,10 +414,18 @@ class Maze {
             var p = temp.coordinatesOnLine(10);
             for(var k = 0; k < p.length; k++){
                 points.push(p[k]);
-            }
+            }*/
         }
         
         
+    }
+
+    calculateArcHitPoints(){
+        //Radius, Start Angle, End Angle, Segement Size, Percission
+    }
+
+    calculateLineHitPoints(){
+
     }
     
     placeJump () {

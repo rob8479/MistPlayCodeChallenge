@@ -37,7 +37,6 @@ var energyBarY;
 
 var gameWorldGroup;
 
-var lines = [];
 var points = [];
 
 // different energy level colours
@@ -82,15 +81,15 @@ class Level {
         if (currentLevel >= introduceCells) {
             this.createEnergyBar();
         }
-        
+
+        this.graphics = this.game.add.graphics(this.game.world.centerX,this.game.world.centerY);
+        this.graphics.lineStyle(8,0xffffff);
         // creates 3 seperate stars backgrounds
         this.createStars(); 
         
         /** Change this */
         this.levelMaze = new Maze();
-        this.levelMaze.createMaze(this.game, this.mazeKey);
-
-        lines = this.levelMaze.getLines();
+        this.levelMaze.createMaze(this.game, this.mazeKey,this.graphics);
         points = this.levelMaze.getPoints();
 
         //console.log(points);
@@ -215,21 +214,10 @@ class Level {
         
         this.handleEnergyLevels();
 
-        //Added to Render the Maze Lines
-        this.render();
         //Check for collisions
         this.checkCollisions();
     }
 
-    /**
-     * Draws the Lines
-     */
-    render(){
-        var c = 'rgb(255,255,255)';
-        for(var i = 0; i < lines.length; i++){
-            this.game.debug.geom(lines[i],c);
-        }
-    }
 
     /**
      *  Performs simple collision detection with the maze walls. For every point on the lines, check whether the distance between
