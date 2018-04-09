@@ -334,20 +334,14 @@ class Maze {
                     } else{
                         
                         //This is where I need to figure out how to the dividers 
-                        var x1 = (circleWidth * (j + 1))  * Math.cos(i * sectorSize + sectorSize);
-                        var y1 = (circleWidth * (j + 1))  * Math.sin(i * sectorSize  + sectorSize);
+                        //Added the +/- 4 to so lines overlap
+                        var x1 = (circleWidth * (j + 1) - 4)  * Math.cos(i * sectorSize + sectorSize);
+                        var y1 = (circleWidth * (j + 1) - 4)  * Math.sin(i * sectorSize  + sectorSize);
 
-                        var x2 = (circleWidth * (j + 2))  * Math.cos(i * sectorSize  + sectorSize);
-                        var y2 = (circleWidth * (j + 2))  * Math.sin(i * sectorSize  + sectorSize);
-                        /*
-                        var temp = (new Phaser.Line(x1, y1, x2, y2));
-                        lines.push(temp);
-
-                        var p = temp.coordinatesOnLine(10);
-                        for(var k = 0; k < p.length; k++){
-                            points.push(p[k]);
-                        }
-                        */
+                        var x2 = (circleWidth * (j + 2) + 4)  * Math.cos(i * sectorSize  + sectorSize);
+                        var y2 = (circleWidth * (j + 2) + 4)  * Math.sin(i * sectorSize  + sectorSize);
+ 
+                       this.calculateLineHitPoints(circleWidth * (j+1),circleWidth,i * sectorSize + sectorSize,10);
                        this.graphics.moveTo(x1,y1);
                        this.graphics.lineTo(x2,y2);
                     }
@@ -356,24 +350,15 @@ class Maze {
         
         //The wall accross all levels (the ends of the square - we may be able to remove this if we implemented wrap around neighbours)
         for(var j = 0; j < numberOfLayers; j++){
-            x1 = (circleWidth * (j + 1))  * Math.cos(0);
-            y1 = (circleWidth * (j + 1))  * Math.sin(0);
+            x1 = (circleWidth * (j + 1) - 4)  * Math.cos(0);
+            y1 = (circleWidth * (j + 1) - 4)  * Math.sin(0);
 
-            x2 = (circleWidth * (j + 2))  * Math.cos(0);
-            y2 = (circleWidth * (j + 2))  * Math.sin(0);
+            x2 = (circleWidth * (j + 2) + 4)  * Math.cos(0);
+            y2 = (circleWidth * (j + 2) + 4)  * Math.sin(0);
 
+            this.calculateLineHitPoints(circleWidth * (j + 1),circleWidth,0,10);
             this.graphics.moveTo(x1,y1);
             this.graphics.lineTo(x2,y2);
-
-            /*
-            lines.push(new Phaser.Line(x1, y1, x2, y2));
-            var temp = (new Phaser.Line(x1, y1, x2, y2));
-            lines.push(temp);
-
-            var p = temp.coordinatesOnLine(10);
-            for(var k = 0; k < p.length; k++){
-                points.push(p[k]);
-            }*/
         }
         
         
@@ -400,7 +385,17 @@ class Maze {
 
     }
 
-    calculateLineHitPoints(){
+    calculateLineHitPoints(startDistance, lineSize, angle, percission){
+        var step = lineSize / percission;
+
+        for(var i = 0; i < percission; i++){
+            //Calculate hte points
+            var x = (startDistance + (i * step))  *  Math.cos(angle);
+            var y = (startDistance + (i * step)) * Math.sin(angle);
+            //Push the Points
+            points.push([x,y]);
+        }
+
 
     }
     
