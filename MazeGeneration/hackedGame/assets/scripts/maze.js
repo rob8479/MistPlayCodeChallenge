@@ -316,6 +316,7 @@ class Maze {
             }*/
 
             this.graphics.arc(0,0,circleWidth,(i * sectorSize), ((i + 1) * sectorSize),false);
+            this.calculateArcHitPoints(circleWidth,i * sectorSize,sectorSize,10);
         }
 
         
@@ -419,9 +420,26 @@ class Maze {
         
         
     }
-
-    calculateArcHitPoints(){
+    /**
+     * 
+     * @param {*} radius  - Distance from the centre of the circles
+     * @param {*} startAngle  - Angle where the arc begins
+     * @param {*} segementSize - The total size of the segement
+     * @param {*} percission - How many points to produce. The higher, the more points.
+     */
+    calculateArcHitPoints(radius,startAngle,segementSize,percission){
         //Radius, Start Angle, End Angle, Segement Size, Percission
+        var step = segementSize/percission;
+
+        //Loop through
+        for(var i = 0; i < percission; i++){
+            //Calculate the Point
+            var x = (radius  * Math.cos(startAngle + (i * step)));
+            var y = (radius  * Math.sin(startAngle + (i * step)));
+            //Push the points
+            points.push([x,y]);
+        }
+
     }
 
     calculateLineHitPoints(){
