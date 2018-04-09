@@ -260,6 +260,54 @@ class Maze {
 
     /**
      * 
+     * @param {*} maze  - The maze array
+     * 
+     * Prints out to console the generated maze. Made up of arrows showing the paths
+     */
+    debugPrint(maze){
+        
+        for(var i = 0; i < maze.length; i++){
+            for(var j = 0; j < maze[0].length ; j++){
+                
+                if(maze[i][j].parent == "root"){
+                    console.log("Start");
+                }
+
+                //Check Right
+                if(i != maze.length - 1){
+                    if(maze[i][j].parent == maze[i + 1][j]){
+                        console.log("<");
+                    }
+                }
+
+                //Check Left
+                if(i != 0){
+                    if(maze[i][j].parent == maze[i - 1][j]){
+                        console.log(">");
+                    }
+                }
+
+                //Check Down
+                if(j != maze[0].length - 1){
+                    if(maze[i][j].parent == maze[i][j + 1]){
+                        console.log("^");
+                    }
+                }
+
+                //Check Up
+                if(j != 0){
+                    if(maze[i][j].parent == maze[i][j - 1]){
+                        console.log("v")
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * 
      * @param {*} numberOfSections - Number of divisons per layer
      * @param {*} numberOfLayers  - Number of Circles
      * @param {*} maze  - The Maze
@@ -271,6 +319,8 @@ class Maze {
     drawMaze(numberOfSections,numberOfLayers, maze, circleWidth){
         var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
         this.sectorSize = sectorSize;
+
+        this.debugPrint(maze);
 
         //Draw The Circles, but only using straight lines
         for(var j = 0; j < numberOfLayers - 1; j++){
