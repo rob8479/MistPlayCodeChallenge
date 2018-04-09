@@ -300,21 +300,6 @@ class Maze {
 
         //Draw the inner most ring - the Spawn Area
         for(var i = 1; i < numberOfSections; i++){
-            /*var x1 = (circleWidth)  * Math.cos(i * sectorSize);
-            var y1 = (circleWidth)  * Math.sin(i * sectorSize);
-
-            var x2 = (circleWidth)  * Math.cos(i * sectorSize + sectorSize);
-            var y2 = (circleWidth)  * Math.sin(i * sectorSize + sectorSize);
-
-
-            var temp = new Phaser.Line(x1, y1, x2, y2);
-            lines.push(temp);
-
-            var p = temp.coordinatesOnLine(10);
-            for(var k = 0; k < p.length; k++){
-                points.push(p[k]);
-            }*/
-
             this.graphics.arc(0,0,circleWidth,(i * sectorSize), ((i + 1) * sectorSize),false);
             this.calculateArcHitPoints(circleWidth,i * sectorSize,sectorSize,10);
         }
@@ -328,43 +313,16 @@ class Maze {
                     (maze[i][j+1].x == maze[i][j].parent.x && maze[i][j+1].y == maze[i][j].parent.y)){
                     continue;
                 } else {
-                    /*
-                    var x1 = ((circleWidth * j + circleWidth * 2)  * Math.cos(i * sectorSize));
-                    var y1 = ((circleWidth * j + circleWidth * 2)  * Math.sin(i * sectorSize));
-
-                    var x2 = ((circleWidth * j) + circleWidth * 2)  * Math.cos(i * sectorSize + sectorSize);
-                    var y2 = ((circleWidth * j) + circleWidth * 2)  * Math.sin(i * sectorSize + sectorSize);
-
-                    var temp = new Phaser.Line(x1, y1, x2, y2);
-                    lines.push(temp);
-
-                    var p = temp.coordinatesOnLine(10);
-                    for(var k = 0; k < p.length; k++){
-                        points.push(p[k]);
-                    }
-                    */
                    this.graphics.arc(0,0,circleWidth * j + circleWidth * 2,(i * sectorSize), ((i + 1) * sectorSize),false);
+                   this.calculateArcHitPoints(circleWidth * j + circleWidth * 2,i * sectorSize,sectorSize,10);
                 }
             }
         } 
 
         //Draw the outmost ring - the Border of the entire maze
         for(var i = 0; i < numberOfSections; i++){
-            /*
-            var x1 = ((circleWidth * (numberOfLayers - 1) + circleWidth * 2)  * Math.cos(i * sectorSize));
-            var y1 = ((circleWidth * (numberOfLayers - 1) + circleWidth * 2)  * Math.sin(i * sectorSize));
-
-            var x2 = ((circleWidth * (numberOfLayers - 1)) + circleWidth * 2)  * Math.cos(i * sectorSize + sectorSize);
-            var y2 = ((circleWidth * (numberOfLayers - 1)) + circleWidth * 2)  * Math.sin(i * sectorSize + sectorSize);
-
-            var temp = new Phaser.Line(x1, y1, x2, y2);
-            lines.push(temp);
-
-            var p = temp.coordinatesOnLine(10);
-            for(var k = 0; k < p.length; k++){
-                points.push(p[k]);
-            }*/
             this.graphics.arc(0,0,circleWidth * (numberOfLayers - 1) + circleWidth * 2,(i * sectorSize), ((i + 1) * sectorSize),false);
+            this.calculateArcHitPoints(circleWidth * (numberOfLayers - 1) + circleWidth * 2,i * sectorSize,sectorSize,10);
         }
 
         //Dividers inside each level
