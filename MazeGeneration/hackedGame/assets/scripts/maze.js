@@ -51,22 +51,28 @@ class Maze {
         this.calculateJumpPosition(numberOfSections,numberOfLayers,circleWidth);
     }
 
-    getStarPositions(numberOfStars,circleWidth){
+    /**
+     * 
+     * @param {*} numberOfStars - The number of stars
+     * 
+     * Randomly chooses locations to spawn stars within the level
+     */
+    getStarPositions(numberOfStars){
         
         var numberSpawned = 0;
         var starPositions = [];
 
         while(numberSpawned != numberOfStars){
             //Randomly Select the layer and section
-            var layer = Math.floor((Math.random() * (this.numberOfLayers - 1)));
-            var section = Math.floor((Math.random() * (this.numberOfSections - 1)));
+            var layer = Math.floor((Math.random() * (this.numberOfLayers)));
+            var section = Math.floor((Math.random() * (this.numberOfSections)));
             
             //If there is not already a star at this position, add one to the maze
             if(!this.maze[section,layer].star){
                 this.maze[section,layer].star = true;
                 //Calculate the world co-ords
-                var x = ((circleWidth * (layer)) + (circleWidth * 2.5))  * Math.cos(section * this.sectorSize + (this.sectorSize / 2));
-                var y = ((circleWidth * (layer)) + (circleWidth * 2.5))  * Math.sin(section * this.sectorSize + (this.sectorSize / 2));
+                var x = ((this.circleWidth * (layer)) + (this.circleWidth * 2.5))  * Math.cos(section * this.sectorSize + (this.sectorSize / 2));
+                var y = ((this.circleWidth * (layer)) + (this.circleWidth * 2.5))  * Math.sin(section * this.sectorSize + (this.sectorSize / 2));
                 //Push co-ords to array
                 starPositions.push([x,y]);
                 numberSpawned++;
@@ -350,6 +356,7 @@ class Maze {
         
         //The wall accross all levels (the ends of the square - we may be able to remove this if we implemented wrap around neighbours)
         for(var j = 0; j < numberOfLayers; j++){
+            //The +/- is for half the width of the line
             x1 = (circleWidth * (j + 1) - 4)  * Math.cos(0);
             y1 = (circleWidth * (j + 1) - 4)  * Math.sin(0);
 
@@ -385,6 +392,13 @@ class Maze {
 
     }
 
+    /**
+     * 
+     * @param {*} startDistance - Starting radius
+     * @param {*} lineSize - The width of the line
+     * @param {*} angle - The angle in which the line emits from
+     * @param {*} percission - How many points should be generated
+     */
     calculateLineHitPoints(startDistance, lineSize, angle, percission){
         var step = lineSize / percission;
 

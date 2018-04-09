@@ -10,7 +10,7 @@
 var currentLevel; // contains` number representing the level the player is currently up to
 var music; // contains background music
 var stageColour = 0x10192c; // dark blue colour of the background and fades
-var failed; // to keep track of whether player has won or lost the level
+var failed = false; // to keep track of whether player has won or lost the level
 
 // xy location of the cell icon in the main menu
 var cellX;

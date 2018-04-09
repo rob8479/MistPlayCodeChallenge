@@ -12,7 +12,8 @@ class EndLevel {
         
         // Level title text
         const headerStyle = { font: "45px Arial", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
-        this.headerText = this.game.add.text(this.game.width/2, this.game.height/8, 'LEVEL ' + localStorage.getItem('currentLevel'), headerStyle);
+        //this.headerText = this.game.add.text(this.game.width/2, this.game.height/8, 'LEVEL ' + localStorage.getItem('currentLevel'), headerStyle);
+        this.headerText = this.game.add.text(this.game.width/2, this.game.height/8, 'LEVEL X', headerStyle);
         this.headerText.anchor.setTo(0.5);
         
         if (Number(localStorage.getItem('bestTime' + String(currentLevel))) == 0) {
@@ -25,7 +26,6 @@ class EndLevel {
         }
         
         if (failed) {
-            
             this.fail();
         }
 
@@ -143,6 +143,14 @@ class EndLevel {
         const bestScoreStyle = { font: "20px Arial", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
         var bestCells = this.game.add.text(this.game.width/2, this.game.height/4 + 100, '', bestScoreStyle);
         bestCells.anchor.setTo(0.5);
+
+        if (currentLevel >= introduceCells) {
+            
+            this.cellText.setText(
+            localStorage.getItem('cellsCollected') + '/' + "5");
+            bestCells.setText('BEST: ' + localStorage.getItem(highScoreKey) + '/' + "5");
+            
+        }
         
         
         

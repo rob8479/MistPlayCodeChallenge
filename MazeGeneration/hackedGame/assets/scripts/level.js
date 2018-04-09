@@ -87,15 +87,17 @@ class Level {
         // creates 3 seperate stars backgrounds
         this.createStars(); 
         
-        /** Change this */
         this.levelMaze = new Maze();
         this.levelMaze.createMaze(this.game, this.mazeKey,this.graphics);
         points = this.levelMaze.getPoints();
 
-        //console.log(points);
- 
-
-        /** Change this collision detection**/
+        // DEBUG - Draw the Points
+        /*
+        for(var i = 0; i < points.length ; i++){
+            this.graphics.beginFill(0xff0000);
+            this.graphics.drawRect(points[i][0], points[i][1], 1,1);
+        }
+        */
 
         this.levelMaze.spaceJump.body.onBeginContact.add((function () {
             
@@ -191,7 +193,7 @@ class Level {
             // spins backgrouns to give dizzy effect
             if (spinWorld) {
 //                gameWorldGroup.angle += worldSpinSpeed; 
-                //this.game.world.angle += worldSpinSpeed;
+                this.game.world.angle += worldSpinSpeed;
             }            
             
             // Stars background effect
@@ -216,7 +218,30 @@ class Level {
 
         //Check for collisions
         this.checkCollisions();
+
+        //Check for Stars
+        this.checkStarPickup();
     }
+
+
+    checkStarPickup(){
+        var playerBounds = this.player.sprite.getBounds();
+        for(var i = 0; i < cells.length; i++){
+            var starBounds = cells[i].getBounds();
+            if(!cells[i].collected){
+                if(Phaser.Rectangle.intersects(playerBounds,starBounds)){
+                    cells[i].collected = true;
+                    this.game.add.tween(cells[i].scale).to( { x: 0, y: 0 }, 500, "Linear", true, 0, 0, false);
+                    cells[i].body.clearShapes(); // clears cell's collider
+                    this.tokensCollected += 1; // adds +1 to a count of how many cells have been collected
+                    this.player.energy = fullEnergy; // restores player's to 100%
+                    this.collectionAnimations(); // plays particle effect and player scaling animation      
+                    return;        
+                }
+            }
+        }
+    }
+
 
 
     /**
@@ -227,12 +252,11 @@ class Level {
         for(var i = 0; i < points.length; i++){
             var xDiff = points[i][0] - this.player.sprite.x;
             var yDiff = points[i][1] - this.player.sprite.y;
-            if(Math.sqrt((xDiff * xDiff) + (yDiff * yDiff)) < 15){
+            if(Math.sqrt((xDiff * xDiff) + (yDiff * yDiff)) < 12){
                 this.handleCrash();
+                return;
             }
         }     
-        
-        
     }
     
     // sets dimensions and bounds of world
@@ -302,7 +326,7 @@ class Level {
     // creates and places energy cells in world
     createCells() {
         //From the Maze, gatber the star positions
-        this.starPositions = this.levelMaze.getStarPositions(5,70);
+        this.starPositions = this.levelMaze.getStarPositions(5);
         
         //Spawn each of the Stars returned
         for(var i = 0; i < this.starPositions.length; i++){
@@ -310,25 +334,27 @@ class Level {
             this.cellX = this.starPositions[i][0];
             this.cellY = this.starPositions[i][1];
 
-            cells[i] = this.game.add.sprite(this.cellX,this.cellY, 'cell');
-
+            cells[i] = this.game.add.sprite(this.cellX, this.cellY, 'cell'); // creates cell sprite in location taken from JSON data file
+            
             cells[i].scale.setTo(0.15);
             this.game.physics.p2.enable(cells[i], enableBodyDebug); // enables physics on the cell
             
             cells[i].anchor.setTo(0.5); // sets anchor to centre
             cells[i].body.static = true; // makes cell immovable
             cells[i].body.data.shapes[0].sensor = true; // turns cell into sensor instead of rigid collider
+            cells[i].collected = false;
             
+            //Ok, No idea why this doesn't work. Going to do our own manual check
+
             // cell will shrink and lose its collider, +1 is added to the player's score, player's energy is refilled, a particle effect
             // will play, and the player's spaceship will animate
-            cells[i].body.onBeginContact.add(function () {
+            /*cells[i].body.onBeginContact.add(function () {
                 //this.game.add.tween(cells[i].scale).to( { x: 0, y: 0 }, 500, "Linear", true, 0, 0, false);
-                console.log(cells[i]);
                 //cells[i].body.clearShapes(); // clears cell's collider
                 this.tokensCollected += 1; // adds +1 to a count of how many cells have been collected
                 this.player.energy = fullEnergy; // restores player's to 100%
                 this.collectionAnimations(); // plays particle effect and player scaling animation              
-            }, this);
+            }, this);*/
                         
             // makes the tokens spin
             this.game.add.tween(cells[i].body).to( { rotation: this.game.math.degToRad(360) }, 4000, "Linear", true, 0, -1, true);
@@ -556,32 +582,7 @@ class Level {
 //        this.game.add.tween(this.energyFade).to( { alpha: 1 }, 500, "Linear", true, 1000, 0, false);
 
     }
-    
-    // LEGACY
-    // creates triggers which shift which colliders are active on the maze
-    createColliderTriggers() {
         
-        this.trigger = [];
-        
-        // creates all triggers
-        for (let i = 0; i < 3; i++) {
-            this.trigger[i] = this.game.add.sprite(0, 0, 'maze');
-            this.trigger[i].alpha = 0;
-            this.game.physics.p2.enable(this.trigger[i], enableBodyDebug);
-            this.trigger[i].body.clearShapes();  
-            this.trigger[i].body.loadPolygon('mazeData', 'trigger' + [i]);
-            this.trigger[i].body.data.shapes[0].sensor = true;
-            this.trigger[i].body.onBeginContact.add(()=> {
-            
-                // when trigger is hit, shapes are cleared and next maze bodies are added
-                var data = 'mazeData' + (i+1);
-                this.maze.body.clearShapes();
-                this.maze.body.loadPolygon('mazeData', data );
-            }, this);
-        }
-        
-    }
-    
     // sets up energy bar
     createEnergyBar() {
         
@@ -724,7 +725,6 @@ class Level {
     handleCrash() {
         
 //        this.restart();
-        
         failed = true;
         this.camShake(); // shakes the camera
         this.gameOn = false;
@@ -739,7 +739,7 @@ class Level {
 //        this.player.sprite.animations.stop();
 //        this.player.sprite.frame = 0;
         //Reset Maze
-        lines = [];
+        //lines = [];
         points = [];
         this.fadeOut();
     }
