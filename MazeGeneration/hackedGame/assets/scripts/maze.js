@@ -311,7 +311,7 @@ class Maze {
         }
 
         
-        //Draw The Circles, but only using straight lines
+        //Draw The inner Layers
         for(var j = 0; j < numberOfLayers - 1; j++){
             for(var i = 0; i < numberOfSections; i++){
                 //If the current cell is the parent of the next cell, or if the next cell is the parent of the current cell, continue - leave the gap
