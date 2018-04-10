@@ -83,9 +83,10 @@ function getStarPositions(numberOfStars,numberOfLayers,numberOfSections,circleWi
 function calculateJumpPosition(maze,numberOfSections,numberOfLayers,circleWidth){
     //Random number between 0 and the numberOfSections - 1
     var randomSection = Math.floor((Math.random() * numberOfSections - 1));
+    var sectorSize = ((360 / numberOfSections) * Math.PI) /180;
     //Trig. to get the position
-    var x = ((circleWidth * (numberOfLayers) + circleWidth) - (circleWidth/2))  * Math.cos(randomSection * this.sectorSize + (this.sectorSize / 2));
-    var y = ((circleWidth * (numberOfLayers) + circleWidth) - (circleWidth/2))  * Math.sin(randomSection * this.sectorSize + (this.sectorSize / 2));
+    var x = ((circleWidth * (numberOfLayers) + circleWidth) - (circleWidth/2))  * Math.cos(randomSection * sectorSize + (sectorSize / 2));
+    var y = ((circleWidth * (numberOfLayers) + circleWidth) - (circleWidth/2))  * Math.sin(randomSection * sectorSize + (sectorSize / 2));
     //Set the exit as taken, so we cannot spawn a star on top of the exit gate
     maze[randomSection,numberOfLayers - 1].star = true;
     //Return the position
