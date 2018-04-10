@@ -3,9 +3,16 @@ const fs = require('fs');
 var points = [];
 var mazes = {};
 
+/**
+ * 
+ * @param {*} numberOfMazes - Number of mazes to produce
+ * @param {*} numberOfLayers - How big the mazes should be
+ * @param {*} numberOfSectors - How many sections per layer there should
+ * @param {*} circleWidth - How thick the circles should be
+ * 
+ * The main control function. Produces a batch of numberOfMazes mazes. All mazes are the same shape.
+ */
 function createBatchMazes(numberOfMazes,numberOfLayers,numberOfSectors,circleWidth){
-    //Open File
-
     //Loop for X number of Mazes
     for(var i = 0; i < numberOfMazes; i++){
         //Name for Level
@@ -314,8 +321,8 @@ function calculatePositions(maze,numberOfSections,numberOfLayers,circleWidth){
         x2 = (circleWidth * (j + 2) + 4)  * Math.cos(0);
         y2 = (circleWidth * (j + 2) + 4)  * Math.sin(0);
 
-        points.push([x1,y1]);
-        points.push([x2.y2]);
+        //points.push([x1,y1]);
+        //points.push([x2.y2]);
     }
 }
 
